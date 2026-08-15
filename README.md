@@ -100,6 +100,13 @@ When accessing your USB drives for the first time, macOS may ask: *"Terminal wou
 
 ---
 
+## ⚠️ Disclaimer
+
+> **Use at your own risk.**  
+> This script performs direct synchronization with file deletion (`--delete`) to mirror files from source to destination. Any data loss, file corruption, or hardware damage resulting from the use or misuse of this software is solely at the user's own risk. Always maintain a separate, secure backup of your master music library before running any synchronization tools.
+
+---
+
 <p align="center">
   <b>🎵 Keep the music playing & never get caught without a backup drive! 🎧</b>
 </p>
