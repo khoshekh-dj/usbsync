@@ -33,6 +33,53 @@ Exporting playlists from **rekordbox** or **Engine DJ** to two separate USBs can
 
 ---
 
+## 📥 Download & First-Time Setup
+
+### 1. Download
+1. Go to the **[GitHub Releases](https://github.com/nmarchini/usbsync/releases)** page.
+2. Under the latest release, download the **Source code (.zip)** file.
+3. Double-click the downloaded zip file in your `Downloads` folder to extract it.
+
+---
+
+### 2. macOS First-Time Gatekeeper Fix
+
+When you download scripts in a zip file from the internet, modern macOS (Sonoma / Sequoia) automatically blocks execution with this security warning:
+
+> ⛔ **“usbsync.command” Not Opened**  
+> *Apple could not verify “usbsync.command” is free of malware that may harm your Mac or compromise your privacy.*
+
+Because Apple removed the old "Right-Click Open" bypass for downloaded scripts, choose **one** of the two easy methods below to authorize it:
+
+#### Method A: Via macOS System Settings *(No Terminal required)*
+1. Double-click [`usbsync.command`](usbsync.command) once (it will show the blocked warning). Click **Done**.
+2. Open **System Settings** on your Mac.
+3. Go to **Privacy & Security** and scroll down to the **Security** section.
+4. You will see: *"usbsync.command was blocked from use because it is not from an identified developer."*
+5. Click **Open Anyway**, enter your Mac password or Touch ID, and click **Open**.
+6. *(You only need to do this once. Afterwards, you can double-click it directly anytime!)*
+
+---
+
+#### Method B: One-Liner in Terminal *(Instant unlock & permissions fix)*
+If you prefer a 2-second command, open Terminal, paste this single line, and press <kbd>Enter</kbd>:
+
+```bash
+cd ~/Downloads/usbsync* && xattr -cr . && chmod +x *.command *.sh
+```
+
+*(This strips the macOS quarantine flag and ensures the file is executable).*
+
+---
+
+#### 💡 Alternative: Clone with Git *(Bypasses macOS quarantine completely)*
+If you clone via Git instead of downloading a zip, macOS will never quarantine the files:
+```bash
+git clone https://github.com/nmarchini/usbsync.git
+```
+
+---
+
 ## 🎛️ Prerequisites
 
 ### 1. 💻 Operating System
