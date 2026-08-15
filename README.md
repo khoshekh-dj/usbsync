@@ -1,60 +1,69 @@
-# usbsync
+# 🎧 usbsync ⚡
 
-Fast, reliable script to synchronize files from one folder or USB drive to another on macOS using `rsync`.
+> **Lightning-fast, zero-stress USB mirroring for DJs & creators on macOS.**  
+> Keep your Primary (`PRI`) and Secondary/Backup (`SEC`) USB sticks 100% identical and gig-ready in seconds.
 
-## Features
-
-- **Automatic USB & Drive Discovery**: Automatically detects plugged-in USB and external hard drives with volume names, sizes, and available free space.
-- **Numbered Selection Menu**: Non-technical users don't need to know or type file paths—just pick a number (`1`, `2`, etc.) or hit <kbd>Enter</kbd> to accept defaults.
-- **Drag & Drop Friendly**: Users can also drag and drop any folder directly from macOS Finder into the Terminal prompt.
-- **Finder Double-Click (`.command`)**: Double-click `usbsync.command` to run without opening Terminal first.
-- **CLI Arguments & Flags**: Direct CLI usage via positional arguments or `-s`/`-d` flags for advanced users or automation.
-- **Safety Checks**: Prevents syncing a drive to itself and validates all directories before beginning.
-- **Zero-Dependency & Portable**: Runs out of the box with built-in macOS tools; automatically upgrades features if modern `rsync` 3.x is installed.
-- **Safe Exclusions**: Automatically excludes macOS system metadata (`.DS_Store`, `.Spotlight-V100`, `.Trashes`, etc.).
-- **Audio Feedback**: Plays a chime upon completion.
+```text
+ 🎛️ Plug In  ──▶  💿 Auto-Detect Drives  ──▶  ⚡ Fast Differential Sync  ──▶  🎶 100% Gig-Ready!
+```
 
 ---
 
-## Prerequisites
+## 🚀 Why DJs Use `usbsync`
 
-### 1. Operating System
-- **macOS** (Apple Silicon or Intel).
+Exporting playlists from **rekordbox** or **Engine DJ** to two separate USBs can take ages. Re-exporting an entire 128GB–1TB drive just for a few new tracks wastes valuable prep time before a gig.
 
-### 2. rsync (Optional but Recommended)
-macOS includes a built-in version of `rsync` (`/usr/bin/rsync` v2.6.9), so **the script runs immediately with no setup required**.
+`usbsync` uses incremental `rsync` mirroring to solve this:
+- ⚡ **Lightning Fast**: Only copies newly added tracks and updated cue point / beatgrid databases (`export.pdb`, `master.dat`, `PIONEER/`, etc.). Syncs in seconds instead of hours!
+- 🧹 **Clean Deletions**: Automatically removes tracks from your backup drive that you deleted from your primary drive.
+- 🛡️ **CDJ-Safe Exclusions**: Prevents macOS from writing junk system files (`.DS_Store`, `.Spotlight-V100`, `.Trashes`) that can slow down or crash hardware players.
+- 🔊 **Audio Chime**: Plays a victory sound once your drives are completely synced and ready for the club.
 
-However, **modern rsync 3.x+ is recommended** for faster transfer speeds and enhanced real-time progress indicators:
+---
 
-#### Option A: Install via Homebrew (Recommended)
-If you do not have Homebrew installed:
+## ✨ Features
+
+- 🔍 **Auto USB Discovery**: Scans and displays all plugged-in USBs and external drives with volume labels and free space.
+- 🔢 **No Typing Required**: Pick your drives with simple numbers (`1`, `2`) or press <kbd>Enter</kbd> to accept smart defaults.
+- 🖱️ **Double-Click & Go (`.command`)**: Non-technical users can just double-click [`usbsync.command`](usbsync.command) straight from macOS Finder.
+- 📂 **Finder Drag & Drop**: Drag and drop any custom playlist or folder right into the terminal window.
+- 🎚️ **Pro CLI Arguments**: Supports positional paths and `-s` / `-d` flags for automated workflows.
+- 🛑 **Accident-Proof**: Safety checks prevent you from accidentally syncing a drive onto itself.
+- 📦 **Zero-Install Ready**: Works out of the box with stock macOS tools, with automatic enhancements for Homebrew `rsync`.
+
+---
+
+## 🎛️ Prerequisites
+
+### 1. 💻 Operating System
+- **macOS** (Apple Silicon M1/M2/M3/M4 or Intel).
+
+### 2. ⚡ rsync *(Optional but Recommended)*
+macOS comes pre-installed with `rsync` (`/usr/bin/rsync` v2.6.9), so **`usbsync` works immediately out of the box with zero installations**.
+
+For the ultimate speed and modern progress bars, **Homebrew `rsync` 3.x+** is recommended:
+
 ```bash
+# Install Homebrew (if you don't have it):
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-```
-Then install modern `rsync`:
-```bash
+
+# Install modern rsync:
 brew install rsync
 ```
 
-#### Option B: Install via MacPorts
-```bash
-sudo port install rsync
-```
+*(If you don't have Homebrew, `usbsync` automatically uses the built-in macOS engine.)*
 
-#### Option C: Built-in macOS Fallback
-If neither is installed, `usbsync` automatically detects stock macOS `rsync` and runs smoothly.
-
-### 3. macOS Disk Permissions (If Prompted)
-When accessing external USB drives for the first time, macOS may ask for permission to access removable volumes or files. Click **Allow**. You can also manage permissions in **System Settings > Privacy & Security > Files and Folders**.
+### 3. 🔐 macOS Disk Permissions *(If Prompted)*
+When accessing your USB drives for the first time, macOS may ask: *"Terminal would like to access files on a removable volume"*. Click **Allow** (or configure in **System Settings > Privacy & Security > Files and Folders**).
 
 ---
 
-## How to Run
+## 💿 How to Run
 
-### Method 1: Double-Click (Best for non-technical users)
+### Method 1: 🖱️ Double-Click in Finder *(Easiest)*
 1. Double-click [`usbsync.command`](usbsync.command) in Finder.
-2. The script will display all connected USB drives in a numbered list:
-   ```
+2. The script displays your detected drives:
+   ```text
    -----------------------------------------------
      🔍  DETECTED EXTERNAL / USB DRIVES
    -----------------------------------------------
@@ -65,22 +74,32 @@ When accessing external USB drives for the first time, macOS may ask for permiss
    Select SOURCE (1-2, [C]ustom path, or Enter for [1 - /Volumes/PRI]): 
    Select DESTINATION (1-2, [C]ustom path, or Enter for [2 - /Volumes/SEC]): 
    ```
-3. Type the number for each drive (or simply hit <kbd>Enter</kbd> to accept the defaults).
-4. Once sync is complete, you'll hear a chime and can press any key to close the window.
+3. Press <kbd>Enter</kbd> twice to accept defaults, or choose your drive numbers.
+4. Listen for the completion chime 🔔 and you're good to hit the decks! 🎧
 
-### Method 2: Command Line (Interactive)
+---
+
+### Method 2: 💻 Command Line (Interactive)
 ```bash
 ./usbsync.sh
 ```
 
-### Method 3: Command Line (Direct Arguments / Flags)
+---
+
+### Method 3: 🎚️ Command Line (Direct Flags & Paths)
 ```bash
-# Positional arguments:
+# Sync by positional paths:
 ./usbsync.sh /Volumes/PRI /Volumes/SEC
 
-# Named flags:
-./usbsync.sh -s ~/Music -d /Volumes/Backup
+# Sync using flags:
+./usbsync.sh -s ~/Music -d /Volumes/SEC
 
-# Help menu:
+# View full help & options:
 ./usbsync.sh --help
 ```
+
+---
+
+<p align="center">
+  <b>🎵 Keep the music playing & never get caught without a backup drive! 🎧</b>
+</p>
