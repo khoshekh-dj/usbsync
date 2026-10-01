@@ -36,7 +36,7 @@ Exporting playlists from **rekordbox** or **Engine DJ** to two separate USBs can
 ## 📥 Download & First-Time Setup
 
 ### 1. Download
-1. Go to the **[GitHub Releases](https://github.com/nmarchini/usbsync/releases)** page.
+1. Go to the **[GitHub Releases](https://github.com/khoshekh-dj/usbsync/releases)** page.
 2. Under the latest release, download the **Source code (.zip)** file.
 3. Double-click the downloaded zip file in your `Downloads` folder to extract it.
 
@@ -75,7 +75,7 @@ cd ~/Downloads/usbsync* && xattr -cr . && chmod +x *.command *.sh
 #### 💡 Alternative: Clone with Git *(Bypasses macOS quarantine completely)*
 If you clone via Git instead of downloading a zip, macOS will never quarantine the files:
 ```bash
-git clone https://github.com/nmarchini/usbsync.git
+git clone https://github.com/khoshekh-dj/usbsync.git
 ```
 *(No Homebrew needed for this either. If `git` isn't installed yet, macOS offers to install Apple's free **Command Line Tools** the first time you run it. Click **Install**, or run `xcode-select --install`. If you'd rather not install anything, use the zip download above.)*
 
