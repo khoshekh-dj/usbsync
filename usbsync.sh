@@ -82,6 +82,34 @@ detect_volumes() {
     done
 }
 
+# --- CLEAN A TYPED OR DRAGGED & DROPPED PATH (no eval) ---
+clean_path() {
+    local p
+    # Trim surrounding whitespace (Terminal adds a trailing space on drag & drop)
+    p="$(printf '%s' "$1" | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')"
+    p="${p%\"}"
+    p="${p#\"}"
+    p="${p%\'}"
+    p="${p#\'}"
+    # Unescape backslash-escaped characters from drag & drop (e.g. My\ Drive)
+    p="$(printf '%s' "$p" | sed 's/\\\(.\)/\1/g')"
+    p="${p/#\~/$HOME}"
+    printf '%s' "$p"
+}
+
+# --- WAIT FOR A KEYPRESS SO THE FINDER WINDOW STAYS OPEN ---
+wait_for_key() {
+    if [ -t 0 ]; then
+        echo ""
+        echo "Press any key to close..."
+        if [ -n "$ZSH_VERSION" ]; then
+            read -k 1 -s -r
+        else
+            read -n 1 -s -r
+        fi
+    fi
+}
+
 # --- PROMPT HELPER FOR VOLUME SELECTION ---
 prompt_for_volume() {
     local label="$1"
@@ -117,11 +145,7 @@ prompt_for_volume() {
         if [[ "$user_input" == "c" || "$user_input" == "C" || "$user_input" == "custom" ]]; then
             printf "👉 Enter custom %s path (or drag & drop folder here): " "$label"
             read -r custom_input
-            custom_input="${custom_input/#\~/$HOME}"
-            custom_input="${custom_input%\"}"
-            custom_input="${custom_input#\"}"
-            custom_input="${custom_input%\'}"
-            custom_input="${custom_input#\'}"
+            custom_input="$(clean_path "$custom_input")"
             if [ -d "$custom_input" ]; then
                 SELECTED_PATH="$custom_input"
                 return 0
@@ -138,20 +162,9 @@ prompt_for_volume() {
         fi
 
         # 4. User typed or dragged & dropped a path directly
-        cleaned_path="${user_input/#\~/$HOME}"
-        cleaned_path="${cleaned_path%\"}"
-        cleaned_path="${cleaned_path#\"}"
-        cleaned_path="${cleaned_path%\'}"
-        cleaned_path="${cleaned_path#\'}"
+        cleaned_path="$(clean_path "$user_input")"
         if [ -d "$cleaned_path" ]; then
             SELECTED_PATH="$cleaned_path"
-            return 0
-        fi
-
-        # Fallback eval for escaped drag & drop paths
-        eval_path="$(eval echo "$user_input" 2>/dev/null)"
-        if [ -n "$eval_path" ] && [ -d "$eval_path" ]; then
-            SELECTED_PATH="$eval_path"
             return 0
         fi
 
@@ -218,12 +231,14 @@ if [ -z "$SOURCE" ] || [ -z "$BACKUP" ]; then
         if [ -z "$SOURCE" ]; then
             printf "Enter source directory [default: %s]: " "$DEFAULT_SOURCE"
             read -r input_source
+            input_source="$(clean_path "$input_source")"
             SOURCE="${input_source:-$DEFAULT_SOURCE}"
         fi
 
         if [ -z "$BACKUP" ]; then
             printf "Enter destination directory [default: %s]: " "$DEFAULT_BACKUP"
             read -r input_backup
+            input_backup="$(clean_path "$input_backup")"
             BACKUP="${input_backup:-$DEFAULT_BACKUP}"
         fi
     fi
@@ -284,17 +299,18 @@ fi
     --exclude=".fseventsd" \
     --exclude="._*" \
     "$SOURCE/" "$BACKUP/"
+RSYNC_STATUS=$?
 
 echo "-----------------------------------------------"
+if [ $RSYNC_STATUS -ne 0 ]; then
+    echo "❌ SYNC FAILED! (rsync exit code $RSYNC_STATUS)"
+    echo "   The destination may be incomplete. Check both drives are"
+    echo "   still connected and have free space, then run the sync again."
+    afplay /System/Library/Sounds/Basso.aiff 2>/dev/null || true
+    wait_for_key
+    exit $RSYNC_STATUS
+fi
+
 echo "✨ SYNC COMPLETE! Directories are now identical."
 afplay /System/Library/Sounds/Glass.aiff 2>/dev/null || true
-
-if [ -t 0 ]; then
-    echo ""
-    echo "Press any key to close..."
-    if [ -n "$ZSH_VERSION" ]; then
-        read -k 1 -s -r
-    else
-        read -n 1 -s -r
-    fi
-fi
+wait_for_key

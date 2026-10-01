@@ -77,6 +77,7 @@ If you clone via Git instead of downloading a zip, macOS will never quarantine t
 ```bash
 git clone https://github.com/nmarchini/usbsync.git
 ```
+*(No Homebrew needed for this either. If `git` isn't installed yet, macOS offers to install Apple's free **Command Line Tools** the first time you run it. Click **Install**, or run `xcode-select --install`. If you'd rather not install anything, use the zip download above.)*
 
 ---
 
@@ -85,20 +86,37 @@ git clone https://github.com/nmarchini/usbsync.git
 ### 1. 💻 Operating System
 - **macOS** (Apple Silicon M1/M2/M3/M4 or Intel).
 
-### 2. ⚡ rsync *(Optional but Recommended)*
-macOS comes pre-installed with `rsync` (`/usr/bin/rsync` v2.6.9), so **`usbsync` works immediately out of the box with zero installations**.
+### 2. ⚡ rsync *(Already on your Mac — nothing to install)*
+Every Mac ships with `rsync` at `/usr/bin/rsync`, so **`usbsync` works out of the box with zero installations. You do *not* need Homebrew.**
 
-For the ultimate speed and modern progress bars, **Homebrew `rsync` 3.x+** is recommended:
+Everything else the script uses (`zsh`, `diskutil`, `afplay`) is also built into macOS.
+
+#### 🍏 No Homebrew? No problem.
+If you've never heard of Homebrew, just skip this section. `usbsync` automatically detects that Homebrew isn't installed and uses the built-in macOS `rsync`. Your drives are mirrored exactly the same way:
+- ✅ New and changed tracks are copied
+- ✅ Deleted tracks are removed from the backup
+- ✅ macOS junk files (`.DS_Store`, `._*`, etc.) are skipped
+
+The only difference you'll notice is the progress display: the built-in version shows progress **per file**, and Homebrew `rsync` shows a single overall progress line.
+
+To confirm the built-in `rsync` is there, open **Terminal** and run:
+```bash
+/usr/bin/rsync --version
+```
+*(On macOS 15.4 Sequoia and later, this shows `openrsync … rsync version 2.6.9 compatible`. On older macOS, it shows `rsync version 2.6.9`. Both work with `usbsync`.)*
+
+#### 🍺 Optional Upgrade: Homebrew `rsync` 3.x+
+If you already use [Homebrew](https://brew.sh), or want the nicer overall progress bar, you can install modern `rsync`:
 
 ```bash
-# Install Homebrew (if you don't have it):
+# Install Homebrew (only if you want it):
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 
 # Install modern rsync:
 brew install rsync
 ```
 
-*(If you don't have Homebrew, `usbsync` automatically uses the built-in macOS engine.)*
+`usbsync` picks it up automatically from `/opt/homebrew/bin/rsync` (Apple Silicon) or `/usr/local/bin/rsync` (Intel). You don't need to change any settings.
 
 ### 3. 🔐 macOS Disk Permissions *(If Prompted)*
 When accessing your USB drives for the first time, macOS may ask: *"Terminal would like to access files on a removable volume"*. Click **Allow** (or configure in **System Settings > Privacy & Security > Files and Folders**).
